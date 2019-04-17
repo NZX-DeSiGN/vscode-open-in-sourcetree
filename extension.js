@@ -1,6 +1,6 @@
 const vscode = require('vscode')
 const findRoot = require('find-root')
-const open = require('opn')
+const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
@@ -47,7 +47,15 @@ async function openInSourceTree () {
 
         const gitPath = await findGitRoot(relevantPath)
 
-        await open(gitPath, { app: 'SourceTree' })
+        await new Promise((resolve, reject) => {
+            exec(`SourceTree -f "${gitPath}"`, (err, stdout, stderr) => {
+              if (err) {
+                  reject()
+              }
+
+              resolve()
+            })
+        })
     }
     catch (err) {
         console.error(err)
